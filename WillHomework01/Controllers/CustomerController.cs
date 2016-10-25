@@ -121,6 +121,17 @@ namespace WillHomework01.Controllers
         {
             客戶資料 客戶資料 = db.客戶資料.Find(id);
             客戶資料.是否已刪除 = true;
+
+            //連動刪除
+            foreach (var bank in 客戶資料.客戶銀行資訊)
+            {
+                bank.是否已刪除 = true;
+            }
+            foreach (var contact in 客戶資料.客戶聯絡人)
+            {
+                contact.是否已刪除 = true;
+            }
+
             db.SaveChanges();
             return RedirectToAction("Index");
         }
