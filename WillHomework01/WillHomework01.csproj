@@ -114,6 +114,10 @@
       <DependentUpon>Customer.edmx</DependentUpon>
       <LastGenOutput>Customer.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\EFGeneratePartialClass.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EFGeneratePartialClass.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -161,17 +165,34 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Customer.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\EFGeneratePartialClass.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\vwCustomerList.cs">
       <DependentUpon>Customer.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vwCustomerList.Partial.cs">
+      <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\客戶聯絡人.cs">
       <DependentUpon>Customer.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\客戶聯絡人.Partial.cs">
+      <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\客戶資料.cs">
       <DependentUpon>Customer.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\客戶資料.Partial.cs">
+      <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\客戶銀行資訊.cs">
       <DependentUpon>Customer.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\客戶銀行資訊.Partial.cs">
+      <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
