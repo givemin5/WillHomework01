@@ -3,12 +3,22 @@ namespace WillHomework01.Models
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    
+    using System.Linq;
+
     [MetadataType(typeof(客戶聯絡人MetaData))]
-    public partial class 客戶聯絡人
+    public partial class 客戶聯絡人 : IValidatableObject
     {
+        private CustomerEntities db = new CustomerEntities();
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            //檢查有無重複的信箱
+            if (db.客戶聯絡人.Any(x => x.Id != this.Id && x.客戶Id==this.客戶Id && x.是否已刪除==false && x.Email.Equals(this.Email)))
+            {
+                yield return new ValidationResult($"已存在{this.Email}，請重新輸入", new string[] { "Email" });
+            }
+        }
     }
-    
+
     public partial class 客戶聯絡人MetaData
     {
         [Required]
