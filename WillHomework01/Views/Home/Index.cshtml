@@ -1,7 +1,44 @@
-﻿
+﻿@model IEnumerable<WillHomework01.Models.vwCustomerList>
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "客戶資料明細";
 }
 
 <h2>Index</h2>
 
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<form action="">
+    <input type="text" name="keyword" />
+    <input type="submit" value="搜尋" />
+</form>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.客戶名稱)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.聯絡人數量)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.銀行帳號數量)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.客戶名稱)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.聯絡人數量)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.銀行帳號數量)
+        </td>
+    </tr>
+}
+
+</table>

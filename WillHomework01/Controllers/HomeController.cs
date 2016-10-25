@@ -3,15 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WillHomework01.Models;
 
 namespace WillHomework01.Controllers
 {
     public class HomeController : Controller
     {
         // GET: Home
-        public ActionResult Index()
+        public ActionResult Index(string keyword="")
         {
-            return View();
+            CustomerEntities db = new CustomerEntities();
+
+            var customerList = db.vwCustomerList.AsQueryable();
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                customerList = customerList.Where(x => x.客戶名稱.Contains(keyword));
+            }
+            return View(customerList);
         }
     }
 }
