@@ -27,8 +27,9 @@ namespace WillHomework01.Models
         [StringLength(250, ErrorMessage="欄位長度不得大於 250 個字元")]
         [Required]
         [EmailAddress]
+
         public string Email { get; set; }
-        
+        [RegularExpression(pattern: @"\d{4}-\d{6}",ErrorMessage ="電話格式必須為0911-111111")]
         [StringLength(50, ErrorMessage="欄位長度不得大於 50 個字元")]
         public string 手機 { get; set; }
         
