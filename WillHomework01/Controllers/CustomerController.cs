@@ -19,6 +19,9 @@ namespace WillHomework01.Controllers
         {
             var customers = db.客戶資料.AsQueryable();
 
+            //被刪除資料不顯示
+            customers = customers.Where(x => !x.是否已刪除);
+
             if (!String.IsNullOrEmpty(keyword))
             {
                 customers = customers.Where(x => x.客戶名稱.Contains(keyword));
@@ -117,7 +120,7 @@ namespace WillHomework01.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶資料 客戶資料 = db.客戶資料.Find(id);
-            db.客戶資料.Remove(客戶資料);
+            客戶資料.是否已刪除 = true;
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -19,6 +19,9 @@ namespace WillHomework01.Controllers
         {
             var contacts = db.客戶聯絡人.Include(客 => 客.客戶資料);
 
+            //被刪除資料不顯示
+            contacts = contacts.Where(x => !x.是否已刪除);
+
             if (!String.IsNullOrEmpty(keyword))
             {
                 contacts = contacts.Where(x => x.客戶資料.客戶名稱.Contains(keyword));
@@ -121,7 +124,7 @@ namespace WillHomework01.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            db.客戶聯絡人.Remove(客戶聯絡人);
+            客戶聯絡人.是否已刪除 = true;
             db.SaveChanges();
             return RedirectToAction("Index");
         }
