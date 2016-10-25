@@ -15,10 +15,16 @@ namespace WillHomework01.Controllers
         private CustomerEntities db = new CustomerEntities();
 
         // GET: Contact
-        public ActionResult Index()
+        public ActionResult Index(string keyword="")
         {
-            var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料);
-            return View(客戶聯絡人.ToList());
+            var contacts = db.客戶聯絡人.Include(客 => 客.客戶資料);
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                contacts = contacts.Where(x => x.客戶資料.客戶名稱.Contains(keyword));
+            }
+
+            return View(contacts.ToList());
         }
 
         // GET: Contact/Details/5
