@@ -15,9 +15,16 @@ namespace WillHomework01.Controllers
         private CustomerEntities db = new CustomerEntities();
 
         // GET: Customer
-        public ActionResult Index()
+        public ActionResult Index(string keyword="")
         {
-            return View(db.客戶資料.ToList());
+            var customers = db.客戶資料.AsQueryable();
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                customers = customers.Where(x => x.客戶名稱.Contains(keyword));
+            }
+
+            return View(customers);
         }
 
         // GET: Customer/Details/5
