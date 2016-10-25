@@ -48,7 +48,7 @@ namespace WillHomework01.Controllers
         // GET: Contact/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x=>x.是否已刪除==false), "Id", "客戶名稱");
             return View();
         }
 
@@ -66,7 +66,7 @@ namespace WillHomework01.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -82,7 +82,7 @@ namespace WillHomework01.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
