@@ -12,12 +12,13 @@ namespace WillHomework01.Controllers
 {
     public class BankController : Controller
     {
-        private CustomerEntities db = new CustomerEntities();
+        客戶銀行資訊Repository bankRepo = RepositoryHelper.Get客戶銀行資訊Repository();
+        客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
 
         // GET: Bank
         public ActionResult Index(string keyword="")
         {
-            var banks = db.客戶銀行資訊.Include(客 => 客.客戶資料);
+            var banks = bankRepo.All().Include(客 => 客.客戶資料);
 
             //被刪除資料不顯示
             banks = banks.Where(x => !x.是否已刪除);
@@ -37,7 +38,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = bankRepo.All().FirstOrDefault(x=>x.Id==id);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
@@ -48,7 +49,7 @@ namespace WillHomework01.Controllers
         // GET: Bank/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(customerRepo.Where(x => x.是否已刪除 == false), "Id", "客戶名稱");
             return View();
         }
 
@@ -61,12 +62,12 @@ namespace WillHomework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶銀行資訊.Add(客戶銀行資訊);
-                db.SaveChanges();
+                bankRepo.Add(客戶銀行資訊);
+                bankRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(customerRepo.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -77,12 +78,12 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = bankRepo.All().FirstOrDefault(x=>x.Id==id);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(customerRepo.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -95,11 +96,12 @@ namespace WillHomework01.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = bankRepo.UnitOfWork.Context;
                 db.Entry(客戶銀行資訊).State = EntityState.Modified;
-                db.SaveChanges();
+                bankRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(customerRepo.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -110,7 +112,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = bankRepo.All().FirstOrDefault(x => x.Id == id);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
@@ -124,7 +126,8 @@ namespace WillHomework01.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            var db = bankRepo.UnitOfWork.Context;
+            客戶銀行資訊 客戶銀行資訊 = bankRepo.All().FirstOrDefault(x => x.Id == id);
             客戶銀行資訊.是否已刪除 = true;
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -134,7 +137,7 @@ namespace WillHomework01.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                customerRepo.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }

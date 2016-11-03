@@ -12,12 +12,12 @@ namespace WillHomework01.Controllers
 {
     public class CustomerController : Controller
     {
-        private CustomerEntities db = new CustomerEntities();
+        IRepository<客戶資料> customerRepo = RepositoryHelper.Get客戶資料Repository();
 
         // GET: Customer
         public ActionResult Index(string keyword="")
         {
-            var customers = db.客戶資料.AsQueryable();
+            var customers = customerRepo.All().AsQueryable();
 
             //被刪除資料不顯示
             customers = customers.Where(x => !x.是否已刪除);
@@ -37,7 +37,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = customerRepo.All().FirstOrDefault(x => x.Id == id);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -60,8 +60,8 @@ namespace WillHomework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶資料.Add(客戶資料);
-                db.SaveChanges();
+                customerRepo.Add(客戶資料);
+                customerRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
@@ -75,7 +75,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = customerRepo.All().FirstOrDefault(x => x.Id == id);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -92,8 +92,9 @@ namespace WillHomework01.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = customerRepo.UnitOfWork.Context;
                 db.Entry(客戶資料).State = EntityState.Modified;
-                db.SaveChanges();
+                customerRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
             return View(客戶資料);
@@ -106,7 +107,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = customerRepo.All().FirstOrDefault(x => x.Id == id);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -119,20 +120,20 @@ namespace WillHomework01.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
-            客戶資料.是否已刪除 = true;
+            客戶資料 customer = customerRepo.All().FirstOrDefault(x => x.Id == id);
+            customer.是否已刪除 = true;
 
             //連動刪除
-            foreach (var bank in 客戶資料.客戶銀行資訊)
+            foreach (var bank in customer.客戶銀行資訊)
             {
                 bank.是否已刪除 = true;
             }
-            foreach (var contact in 客戶資料.客戶聯絡人)
+            foreach (var contact in customer.客戶聯絡人)
             {
                 contact.是否已刪除 = true;
             }
 
-            db.SaveChanges();
+            customerRepo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 
@@ -140,7 +141,7 @@ namespace WillHomework01.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                customerRepo.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }

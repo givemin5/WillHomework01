@@ -9,12 +9,13 @@ namespace WillHomework01.Controllers
 {
     public class HomeController : Controller
     {
+        
         // GET: Home
         public ActionResult Index(string keyword="")
         {
-            CustomerEntities db = new CustomerEntities();
+            IRepository<vwCustomerList> vwRepo = RepositoryHelper.GetvwCustomerListRepository();
 
-            var customerList = db.vwCustomerList.AsQueryable();
+            var customerList = vwRepo.All().AsQueryable();
 
             if (!String.IsNullOrEmpty(keyword))
             {

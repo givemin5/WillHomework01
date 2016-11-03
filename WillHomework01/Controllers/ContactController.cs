@@ -12,12 +12,12 @@ namespace WillHomework01.Controllers
 {
     public class ContactController : Controller
     {
-        private CustomerEntities db = new CustomerEntities();
-
+        客戶聯絡人Repository contactRepo = RepositoryHelper.Get客戶聯絡人Repository();
+        客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         // GET: Contact
         public ActionResult Index(string keyword="")
         {
-            var contacts = db.客戶聯絡人.Include(客 => 客.客戶資料);
+            var contacts = contactRepo.All().Include(客 => 客.客戶資料);
 
             //被刪除資料不顯示
             contacts = contacts.Where(x => !x.是否已刪除);
@@ -37,7 +37,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = contactRepo.All().FirstOrDefault(x => x.Id == id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -48,7 +48,7 @@ namespace WillHomework01.Controllers
         // GET: Contact/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x=>x.是否已刪除==false), "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(customerRepo.Where(x=>x.是否已刪除==false), "Id", "客戶名稱");
             return View();
         }
 
@@ -61,12 +61,12 @@ namespace WillHomework01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(客戶聯絡人);
-                db.SaveChanges();
+                contactRepo.Add(客戶聯絡人);
+                contactRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(customerRepo.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -77,12 +77,12 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = contactRepo.All().FirstOrDefault(x => x.Id == id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(customerRepo.Where(x => x.是否已刪除 == false), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -95,11 +95,12 @@ namespace WillHomework01.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = contactRepo.UnitOfWork.Context;
                 db.Entry(客戶聯絡人).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(customerRepo.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -110,7 +111,7 @@ namespace WillHomework01.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = contactRepo.All().FirstOrDefault(x => x.Id == id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -123,9 +124,9 @@ namespace WillHomework01.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = contactRepo.All().FirstOrDefault(x => x.Id == id);
             客戶聯絡人.是否已刪除 = true;
-            db.SaveChanges();
+            contactRepo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 
@@ -133,7 +134,7 @@ namespace WillHomework01.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                contactRepo.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }
