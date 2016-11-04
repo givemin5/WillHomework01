@@ -15,14 +15,9 @@ namespace WillHomework01.Controllers
         客戶聯絡人Repository contactRepo = RepositoryHelper.Get客戶聯絡人Repository();
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         // GET: Contact
-        public ActionResult Index(string keyword="")
+        public ActionResult Index(string 職稱,string keyword="")
         {
-            var contacts = contactRepo.All().Include(客 => 客.客戶資料);
-
-            if (!String.IsNullOrEmpty(keyword))
-            {
-                contacts = contacts.Where(x => x.客戶資料.客戶名稱.Contains(keyword));
-            }
+            var contacts = contactRepo.Search(職稱,keyword);
 
             return View(contacts.ToList());
         }
