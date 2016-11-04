@@ -10,17 +10,24 @@ using WillHomework01.Models;
 
 namespace WillHomework01.Controllers
 {
+    
+
     public class CustomerController : Controller
     {
         IRepository<客戶資料> customerRepo = RepositoryHelper.Get客戶資料Repository();
 
         // GET: Customer
-        public ActionResult Index(string keyword="")
+        public ActionResult Index(string 客戶分類,string keyword="")
+
         {
+            ViewBag.客戶分類 = new SelectList(new string[] { "OAK", "Normal", "VIP" });
             var customers = customerRepo.All().AsQueryable();
 
-            //被刪除資料不顯示
-            customers = customers.Where(x => !x.是否已刪除);
+            if (!String.IsNullOrEmpty(客戶分類))
+            {
+                customers = customers.Where(x => x.客戶分類==客戶分類);
+            }
+
 
             if (!String.IsNullOrEmpty(keyword))
             {
@@ -48,6 +55,8 @@ namespace WillHomework01.Controllers
         // GET: Customer/Create
         public ActionResult Create()
         {
+            ViewBag.客戶分類 = new SelectList(new string[] { "OAK","Normal","VIP"});
+
             return View();
         }
 
@@ -64,7 +73,7 @@ namespace WillHomework01.Controllers
                 customerRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-
+            ViewBag.客戶分類 = new SelectList(new string[] { "OAK", "Normal", "VIP" });
             return View(客戶資料);
         }
 
@@ -80,6 +89,7 @@ namespace WillHomework01.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.客戶分類 = new SelectList(new string[] { "OAK", "Normal", "VIP" });
             return View(客戶資料);
         }
 
@@ -88,7 +98,7 @@ namespace WillHomework01.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
+        public ActionResult Edit([Bind(Include = "Id,客戶名稱,客戶分類,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
@@ -97,6 +107,7 @@ namespace WillHomework01.Controllers
                 customerRepo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
+            ViewBag.客戶分類 = new SelectList(new string[] { "OAK", "Normal", "VIP" });
             return View(客戶資料);
         }
 
