@@ -1,9 +1,13 @@
-﻿using System;
+﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using WillHomework01.Models;
@@ -138,6 +142,44 @@ namespace WillHomework01.Controllers
 
             customerRepo.UnitOfWork.Commit();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ToExcel()
+        {
+            //http://www.cnblogs.com/luwenlong/p/3614286.html
+            //创建Excel文件的对象
+            //IWorkbook workbook = new XSSFWorkbook(); //-- XSSF 用來產生Excel 2007檔案（.xlsx）
+            NPOI.HSSF.UserModel.HSSFWorkbook book = new NPOI.HSSF.UserModel.HSSFWorkbook();
+            //添加一个sheet
+            NPOI.SS.UserModel.ISheet sheet1 = book.CreateSheet("Sheet1");
+
+            NPOI.SS.UserModel.IRow row1 = sheet1.CreateRow(0);
+
+            var properties = typeof(客戶資料).GetType().GetProperties(BindingFlags.Public);
+
+            for (int i = 0; i < properties.Length; i++)
+            {
+                row1.CreateCell(i).SetCellValue(properties[i].Name);
+            }
+            //将数据逐步写入sheet1各个行
+            var datas = customerRepo.All().ToList();
+
+            //for (int i = 0; i <= properties.Length; i++)
+            //{
+            //    u_sheet.CreateRow(i+1);
+            //    for (int x = 0; x < properties.Length; x++)
+            //    {
+            //        var val = datas[i].GetType().GetProperty(properties[x].Name).GetValue(datas[i], null);
+
+            //        u_sheet.GetRow(i+1).CreateCell(x).SetCellValue(val as string);
+            //    }
+            //}
+
+            // 写入到客户端 
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            book.Write(ms);
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/vnd.ms-excel", "客戶資料.xls");
         }
 
         protected override void Dispose(bool disposing)
