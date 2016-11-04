@@ -14,16 +14,36 @@
 
     @Html.TextBox("keyword")
 
+    @Html.Hidden("SortOrder")
+
+    @Html.Hidden("IsAsc")
+
     <input type="submit" value="搜尋" />
 </form>
+
+@{
+    var sortkey = true;
+    if (ViewBag.IsAsc != null)
+    {
+        sortkey = !ViewBag.IsAsc;
+    }
+
+
+ }
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.客戶名稱)
+            <a href="@Url.Action("Index","Customer",new { IsAsc = sortkey, SortOrder="客戶名稱" })">
+                @Html.DisplayNameFor(model => model.客戶名稱)
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.統一編號)
-        </th>
+            <a href="@Url.Action("Index","Customer",new { IsAsc = sortkey, SortOrder="統一編號" })">
+                @Html.DisplayNameFor(model => model.統一編號)
+            </a>
+                
+</th>
         <th>
             @Html.DisplayNameFor(model => model.電話)
         </th>

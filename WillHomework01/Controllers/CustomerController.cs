@@ -17,14 +17,14 @@ namespace WillHomework01.Controllers
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
 
         // GET: Customer
-        public ActionResult Index(string 客戶分類,string keyword="")
+        public ActionResult Index(string 客戶分類,string keyword="",string sortOrder ="",bool IsAsc=true)
 
         {
             ViewBag.客戶分類 = new SelectList(new string[] { "OAK", "Normal", "VIP" });
 
-            var customers = customerRepo.Search(客戶分類,keyword);
+            var customers = customerRepo.Search(客戶分類,keyword, sortOrder, IsAsc);
 
-            
+            ViewBag.IsAsc = IsAsc;
 
             return View(customers);
         }
