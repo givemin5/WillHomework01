@@ -1,4 +1,7 @@
 using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+using System.Linq;
 
 namespace WillHomework01.Models
 {
@@ -13,7 +16,22 @@ namespace WillHomework01.Models
 
 		public void Commit()
 		{
-			Context.SaveChanges();
+            try
+            {
+                Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                var entityError = ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage);
+                var getFullMessage = string.Join("; ", entityError);
+                var exceptionMessage = string.Concat(ex.Message, "errors are: ", getFullMessage);
+
+                Debug.Print(getFullMessage + " " + exceptionMessage);
+                throw ex;
+                //NLog
+                //LogException(new Exception(string.Format("File : {0} {1}.", logFile.FullName, exceptionMessage), ex));
+            }
+            
 		}
 		
 		public bool LazyLoadingEnabled
