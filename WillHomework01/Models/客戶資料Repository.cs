@@ -10,7 +10,25 @@ namespace WillHomework01.Models
 		{
 			return base.All().Where(x => x.是否已刪除 != true);
 		}
-	}
+
+        internal object Search(string level, string keyword)
+        {
+            var customers = this.All().AsQueryable();
+
+            if (!String.IsNullOrEmpty(level))
+            {
+                customers = customers.Where(x => x.客戶分類 == level);
+            }
+
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                customers = customers.Where(x => x.客戶名稱.Contains(keyword));
+            }
+
+            return customers;
+        }
+    }
 
 	public  interface I客戶資料Repository : IRepository<客戶資料>
 	{

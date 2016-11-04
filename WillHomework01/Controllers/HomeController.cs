@@ -13,7 +13,7 @@ namespace WillHomework01.Controllers
         // GET: Home
         public ActionResult Index(string keyword="")
         {
-            IRepository<vwCustomerList> vwRepo = RepositoryHelper.GetvwCustomerListRepository();
+            vwCustomerListRepository vwRepo = RepositoryHelper.GetvwCustomerListRepository();
 
             var customerList = vwRepo.All().AsQueryable();
 
@@ -21,6 +21,8 @@ namespace WillHomework01.Controllers
             {
                 customerList = customerList.Where(x => x.客戶名稱.Contains(keyword));
             }
+
+
             return View(customerList);
         }
     }

@@ -18,15 +18,7 @@ namespace WillHomework01.Controllers
         // GET: Bank
         public ActionResult Index(string keyword="")
         {
-            var banks = bankRepo.All().Include(客 => 客.客戶資料);
-
-            //被刪除資料不顯示
-            banks = banks.Where(x => !x.是否已刪除);
-
-            if (!String.IsNullOrEmpty(keyword))
-            {
-                banks = banks.Where(x => x.客戶資料.客戶名稱.Contains(keyword));
-            }
+            IQueryable<客戶銀行資訊> banks = bankRepo.Search(keyword);
 
             return View(banks.ToList());
         }

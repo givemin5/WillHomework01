@@ -14,25 +14,17 @@ namespace WillHomework01.Controllers
 
     public class CustomerController : Controller
     {
-        IRepository<客戶資料> customerRepo = RepositoryHelper.Get客戶資料Repository();
+        客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
 
         // GET: Customer
         public ActionResult Index(string 客戶分類,string keyword="")
 
         {
             ViewBag.客戶分類 = new SelectList(new string[] { "OAK", "Normal", "VIP" });
-            var customers = customerRepo.All().AsQueryable();
 
-            if (!String.IsNullOrEmpty(客戶分類))
-            {
-                customers = customers.Where(x => x.客戶分類==客戶分類);
-            }
+            var customers = customerRepo.Search(客戶分類,keyword);
 
-
-            if (!String.IsNullOrEmpty(keyword))
-            {
-                customers = customers.Where(x => x.客戶名稱.Contains(keyword));
-            }
+            
 
             return View(customers);
         }
